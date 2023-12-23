@@ -3,6 +3,8 @@ package org.example.sort;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class SortApp {
@@ -65,21 +67,13 @@ public class SortApp {
 
         JButton sortButton = new JButton("Начать сортировку");
         sortButton.addActionListener(e -> {
+            ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-            new SortingThread(arrayBubbleSort,
-                    "Сортировка пузырьком",
-                    this::bubbleSort,
-                    listBubbleSort).start();
+            executorService.submit(createSortingTask(arrayBubbleSort, "Сортировка пузырьком", this::bubbleSort, listBubbleSort));
+            executorService.submit(createSortingTask(arrayInsertionSort, "Сортировка вставками", this::insertionSort, listInsertionSort));
+            executorService.submit(createSortingTask(arraySelectionSort, "Сортировка выбором", this::selectionSort, listSelectionSort));
 
-            new SortingThread(arrayInsertionSort,
-                    "Сортировка вставками",
-                    this::insertionSort,
-                    listInsertionSort).start();
-
-            new SortingThread(arraySelectionSort,
-                    "Сортировка выбором",
-                    this::selectionSort,
-                    listSelectionSort).start();
+            executorService.shutdown();
         });
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
@@ -185,27 +179,15 @@ public class SortApp {
         logStats("Сортировка выбором", comparisons, swaps);
     }
 
-    private class SortingThread extends Thread {
-        private final int[] array;
-        private final String sortMethodName;
-        private final Consumer<int[]> sortMethod;
-        private final JList<String> listSort;
-
-        SortingThread(int[] array, String sortMethodName, Consumer<int[]> sortMethod, JList<String> listSort) {
-            this.array = array;
-            this.sortMethodName = sortMethodName;
-            this.sortMethod = sortMethod;
-            this.listSort = listSort;
-        }
-
-        @Override
-        public void run() {
+    private Runnable createSortingTask(int[] array, String sortMethodName, Consumer<int[]> sortMethod, JList<String> listSort) {
+        return () -> {
             long startTime = System.currentTimeMillis();
-            this.sortMethod.accept(this.array);
+            sortMethod.accept(array);
             long endTime = System.currentTimeMillis();
             long sortTime = endTime - startTime;
-            displayArray(this.array, listSort, this.sortMethodName);
-            logArea.append(this.sortMethodName + ". Затраты времени: " + sortTime + " мс\n");
-        }
+
+            displayArray(array, listSort, sortMethodName);
+            logArea.append(sortMethodName + ". Затраты времени: " + sortTime + " мс\n");
+        };
     }
 }
