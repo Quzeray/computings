@@ -25,7 +25,7 @@ public class SortApp {
     }
 
     private void createAndShowGUI() {
-        JFrame frame = new JFrame("РЎРѕСЂС‚РёСЂРѕРІРєРё");
+        JFrame frame = new JFrame("Сортировки");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
 
@@ -49,35 +49,35 @@ public class SortApp {
         logArea = new JTextArea();
         logArea.setEditable(false);
 
-        JButton createButton = new JButton("РЎРѕР·РґР°С‚СЊ РјР°СЃСЃРёРІ");
+        JButton createButton = new JButton("Создать массив");
         createButton.addActionListener(e -> {
-            int arraySize = Integer.parseInt(JOptionPane.showInputDialog("Р Р°Р·РјРµСЂ РјР°СЃСЃРёРІР°:"));
-            int minValue = Integer.parseInt(JOptionPane.showInputDialog("РњРёРЅРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ СЃР»СѓС‡Р°Р№РЅС‹С… С‡РёСЃРµР»:"));
-            int maxValue = Integer.parseInt(JOptionPane.showInputDialog("РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ СЃР»СѓС‡Р°Р№РЅС‹С… С‡РёСЃР»Рµ:"));
+            int arraySize = Integer.parseInt(JOptionPane.showInputDialog("Размер массива:"));
+            int minValue = Integer.parseInt(JOptionPane.showInputDialog("Минимальное значение случайных чисел:"));
+            int maxValue = Integer.parseInt(JOptionPane.showInputDialog("Максимальное значение случайных числе:"));
 
             originalArray = generateRandomArray(arraySize, minValue, maxValue);
             arrayBubbleSort = Arrays.copyOf(originalArray, originalArray.length);
             arrayInsertionSort = Arrays.copyOf(originalArray, originalArray.length);
             arraySelectionSort = Arrays.copyOf(originalArray, originalArray.length);
 
-            displayArray(originalArray, listOriginal, "РћСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ РјР°СЃСЃРёРІ");
+            displayArray(originalArray, listOriginal, "Оригинальный массив");
         });
 
-        JButton sortButton = new JButton("РќР°С‡Р°С‚СЊ СЃРѕСЂС‚РёСЂРѕРІРєСѓ");
+        JButton sortButton = new JButton("Начать сортировку");
         sortButton.addActionListener(e -> {
 
             new SortingThread(arrayBubbleSort,
-                    "РЎРѕСЂС‚РёСЂРѕРІРєР° РїСѓР·С‹СЂСЊРєРѕРј",
+                    "Сортировка пузырьком",
                     this::bubbleSort,
                     listBubbleSort).start();
 
             new SortingThread(arrayInsertionSort,
-                    "РЎРѕСЂС‚РёСЂРѕРІРєР° РІСЃС‚Р°РІРєР°РјРё",
+                    "Сортировка вставками",
                     this::insertionSort,
                     listInsertionSort).start();
 
             new SortingThread(arraySelectionSort,
-                    "РЎРѕСЂС‚РёСЂРѕРІРєР° РІС‹Р±РѕСЂРѕРј",
+                    "Сортировка выбором",
                     this::selectionSort,
                     listSelectionSort).start();
         });
@@ -112,8 +112,8 @@ public class SortApp {
     }
 
     private void logStats(String algorithmName, int comparisons, int swaps) {
-        logArea.append(algorithmName + ". РљРѕР»РёС‡РµСЃС‚РІРѕ СЃСЂР°РІРЅРµРЅРёР№: " + comparisons +
-                ", РљРѕР»РёС‡РµСЃС‚РІРѕ РїРµСЂРµСЃС‚Р°РЅРѕРІРѕРє: " + swaps + "\n");
+        logArea.append(algorithmName + ". Количество сравнений: " + comparisons +
+                ", Количество перестановок: " + swaps + "\n");
     }
 
     private void bubbleSort(int[] array) {
@@ -137,7 +137,7 @@ public class SortApp {
             n--;
         } while (swapped);
 
-        logStats("РЎРѕСЂС‚РёСЂРѕРІРєР° РїСѓР·С‹СЂСЊРєРѕРј", comparisons, swaps);
+        logStats("Сортировка пузырьком", comparisons, swaps);
     }
 
     private void insertionSort(int[] array) {
@@ -159,7 +159,7 @@ public class SortApp {
             array[j + 1] = key;
         }
 
-        logStats("РЎРѕСЂС‚РёСЂРѕРІРєР° РІСЃС‚Р°РІРєР°РјРё", comparisons, swaps);
+        logStats("Сортировка вставками", comparisons, swaps);
     }
 
     private void selectionSort(int[] array) {
@@ -182,7 +182,7 @@ public class SortApp {
             array[minIndex] = temp;
         }
 
-        logStats("РЎРѕСЂС‚РёСЂРѕРІРєР° РІС‹Р±РѕСЂРѕРј", comparisons, swaps);
+        logStats("Сортировка выбором", comparisons, swaps);
     }
 
     private class SortingThread extends Thread {
@@ -205,7 +205,7 @@ public class SortApp {
             long endTime = System.currentTimeMillis();
             long sortTime = endTime - startTime;
             displayArray(this.array, listSort, this.sortMethodName);
-            logArea.append(this.sortMethodName + ". Р—Р°С‚СЂР°С‚С‹ РІСЂРµРјРµРЅРё: " + sortTime + " РјСЃ\n");
+            logArea.append(this.sortMethodName + ". Затраты времени: " + sortTime + " мс\n");
         }
     }
 }
